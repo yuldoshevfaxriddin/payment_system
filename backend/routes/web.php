@@ -12,10 +12,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function (Illuminate\Http\Request $r) {
-    return view('welcome');
+	$respons = [
+	"status"=>"succes",
+	"message"=>"bu test"	
+];
+    return json_encode($respons);
 });
+
 Route::get('/register',[\App\Http\Controllers\AuthController::class,'register']);
 Route::get('/login',[\App\Http\Controllers\AuthController::class,'login']);
 
