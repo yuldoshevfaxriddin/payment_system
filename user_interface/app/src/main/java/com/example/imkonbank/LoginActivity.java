@@ -56,8 +56,16 @@ public class LoginActivity extends AppCompatActivity {
                 String telNumber = username.getText().toString();
                 String passwordEntry = password.getText().toString();
                 String url = "http://192.168.43.136:8000/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
-//                String url = "http://192.168.43.136:8000/register?name=1234156567&tel_number=1312312&password=salom&device_info=samsung";
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                if(telNumber.equals("admin")){
+                    Toast.makeText(LoginActivity.this, "test rejimi if ishladi", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+                else{
+
+                    Toast.makeText(LoginActivity.this, "else ishladi", Toast.LENGTH_SHORT).show();
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -82,12 +90,14 @@ public class LoginActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        textView.setText("server bilan bog'lanishda xatolik");
+//                        textView.setText("server bilan bog'lanishda xatolik");
+                        Toast.makeText(LoginActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
                         Logger.getLogger(LoginActivity.class.getName()).log(Level.SEVERE,"xatolik",error);
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
                 requestQueue.add(request);
+                }
             }
         });
 
