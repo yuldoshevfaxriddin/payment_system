@@ -1,6 +1,7 @@
 package com.example.imkonbank;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,8 +25,10 @@ import org.json.JSONObject;
 
 public class HomeFragment extends Fragment {
 
+    MyDataBaseHelper myDb = new MyDataBaseHelper(getActivity());
+//    Cursor card = myDb.readCards();
     TextView payment_btn;
-    TextView payment_stories;
+    TextView payment_stories,card_owner,card_number,card_live_time,card_total_price;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +42,15 @@ public class HomeFragment extends Fragment {
         payment_btn = view.findViewById(R.id.payment);
         payment_stories = view.findViewById(R.id.payment_stories);
 
+        card_number = view.findViewById(R.id.card_number);
+        card_owner = view.findViewById(R.id.card_owner);
+        card_live_time = view.findViewById(R.id.card_live_time);
+        card_total_price = view.findViewById(R.id.card_total_price);
+
+        card_number.setText(getActivity().getIntent().getExtras().getString("card_number"));
+        card_owner.setText(getActivity().getIntent().getExtras().getString("card_owner"));
+        card_live_time.setText(getActivity().getIntent().getExtras().getString("card_live_time"));
+        card_total_price.setText(getActivity().getIntent().getExtras().getString("card_total_price"));
         payment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

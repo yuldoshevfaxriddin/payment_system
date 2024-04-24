@@ -1,6 +1,7 @@
 package com.example.imkonbank;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,34 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
+        MyDataBaseHelper mydb = new MyDataBaseHelper(LoginActivity.this);
+
+        Cursor res = mydb.readAllData();
+        if (res.getCount()!=0){
+            String card_number="",card_live_time="",card_owner="",card_total_price="";
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+            while(res.moveToNext()){
+                card_owner = res.getString(1);
+            }
+
+            Cursor card = mydb.readCards();
+            if (card.getCount()==0){
+                textView.setText("card malumot yoq");
+                return ;
+            }
+            while(card.moveToNext()){
+//                card_owner = card.getString(1);
+                card_number = card.getString(2);
+                card_live_time = card.getString(3);
+                card_total_price = card.getString(4);
+            }
+            intent.putExtra("card_number",card_number);
+            intent.putExtra("card_owner",card_owner);
+            intent.putExtra("card_live_time",card_live_time);
+            intent.putExtra("card_total_price",card_total_price);
+            startActivity(intent);
+        }
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
@@ -49,21 +78,18 @@ public class LoginActivity extends AppCompatActivity {
         textView  = findViewById(R.id.test);
 
         String deviceInfo = Build.BRAND + " " + Build.MODEL;
-        textView.setText(deviceInfo);
+//        textView.setText(deviceInfo);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String telNumber = username.getText().toString();
                 String passwordEntry = password.getText().toString();
-                String url = "http://192.168.43.136:8000/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
-                if(telNumber.equals("admin")){
-                    Toast.makeText(LoginActivity.this, "test rejimi if ishladi", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-                else{
-
-                    Toast.makeText(LoginActivity.this, "else ishladi", Toast.LENGTH_SHORT).show();
+                String url = "http://192.168.121.136:8000/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
+//                if(telNumber.equals("admin")){
+////                    Toast.makeText(LoginActivity.this, "test rejimi if ishladi", Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(intent);
+//                }
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -73,10 +99,26 @@ public class LoginActivity extends AppCompatActivity {
                         String message = response.getString("message");
                         if(status.equals("succes")){
                             JSONObject user = response.getJSONObject("user");
-//                            JSONObject cards = response.getJSONObject("virtual_cards"); // array keladi
-//                            JSONObject devices = response.getJSONObject("devices"); //array keladi
-
-//                            data basaga yozilsin
+                            String user_id = user.getString("id");
+                            String name = user.getString("name");
+                            String tel_number = user.getString("tel_number");
+                            String device_token = user.getString("device_token");
+                            String password = passwordEntry;
+                            String tel_password = "admin";
+                            boolean t = mydb.addUser(user_id,tel_number,name,password,tel_password,device_token);
+                            if(! t){
+                                Toast.makeText(LoginActivity.this, "user malumot qoshilmadi", Toast.LENGTH_SHORT).show();
+                            }
+                            JSONObject cards = response.getJSONObject("virtual_cards"); // array keladi
+                            String card_id = cards.getString("id");
+                            String card_user_id = cards.getString("user_id");
+                            String card_number = cards.getString("card_number");
+                            String card_live_time = cards.getString("live_time");
+                            String card_total_price = cards.getString("total_price");
+                            t = mydb.addCard(card_id,card_user_id,card_number,card_live_time,card_total_price);
+                            if(! t){
+                                Toast.makeText(LoginActivity.this, "card malumot qoshilmadi", Toast.LENGTH_SHORT).show();
+                            }
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
@@ -90,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-//                        textView.setText("server bilan bog'lanishda xatolik");
                         Toast.makeText(LoginActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
                         Logger.getLogger(LoginActivity.class.getName()).log(Level.SEVERE,"xatolik",error);
                     }
@@ -98,7 +139,6 @@ public class LoginActivity extends AppCompatActivity {
                 RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
                 requestQueue.add(request);
                 }
-            }
         });
 
         signuptext.setOnClickListener(new View.OnClickListener() {
