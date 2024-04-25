@@ -37,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     TextView signuptext;
     TextView textView;
+    String HOST_SERVER = "http://192.168.43.136:8000";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +49,12 @@ public class LoginActivity extends AppCompatActivity {
 
         Cursor res = mydb.readAllData();
         if (res.getCount()!=0){
-            String card_number="",card_live_time="",card_owner="",card_total_price="";
+            String card_number="",card_live_time="",card_owner="",card_total_price="",device_token="";
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
             while(res.moveToNext()){
                 card_owner = res.getString(1);
+                device_token = res.getString(5);
             }
 
             Cursor card = mydb.readCards();
@@ -69,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra("card_owner",card_owner);
             intent.putExtra("card_live_time",card_live_time);
             intent.putExtra("card_total_price",card_total_price);
+            intent.putExtra("device_token",device_token);
             startActivity(intent);
         }
         username = findViewById(R.id.username);
@@ -84,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String telNumber = username.getText().toString();
                 String passwordEntry = password.getText().toString();
-                String url = "http://192.168.121.136:8000/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
+                String url = HOST_SERVER+"/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
 //                if(telNumber.equals("admin")){
 ////                    Toast.makeText(LoginActivity.this, "test rejimi if ishladi", Toast.LENGTH_SHORT).show();
 //                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -109,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                             if(! t){
                                 Toast.makeText(LoginActivity.this, "user malumot qoshilmadi", Toast.LENGTH_SHORT).show();
                             }
-                            JSONObject cards = response.getJSONObject("virtual_cards"); // array keladi
+                            JSONObject cards = response.getJSONObject("virtual_cards"); // array kelishi karak edi, bir dona keladigan qildim
                             String card_id = cards.getString("id");
                             String card_user_id = cards.getString("user_id");
                             String card_number = cards.getString("card_number");

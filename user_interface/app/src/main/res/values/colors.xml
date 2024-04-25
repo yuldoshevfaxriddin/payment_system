@@ -11,5 +11,6 @@
 
     <color name="purple">#8692f7</color>
     <color name="card_background">#8692f7</color>
+    <color name="error">#EC0B13</color>
 
 </resources>

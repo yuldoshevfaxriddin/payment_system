@@ -29,6 +29,7 @@ public class HomeFragment extends Fragment {
 //    Cursor card = myDb.readCards();
     TextView payment_btn;
     TextView payment_stories,card_owner,card_number,card_live_time,card_total_price;
+    String device_token;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,10 +52,13 @@ public class HomeFragment extends Fragment {
         card_owner.setText(getActivity().getIntent().getExtras().getString("card_owner"));
         card_live_time.setText(getActivity().getIntent().getExtras().getString("card_live_time"));
         card_total_price.setText(getActivity().getIntent().getExtras().getString("card_total_price"));
+        device_token = getActivity().getIntent().getExtras().getString("device_token");
         payment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PaymentActivity.class);
+                intent.putExtra("device_token",device_token);
+                intent.putExtra("total_price",card_total_price.getText());
                 startActivity(intent);
             }
         });

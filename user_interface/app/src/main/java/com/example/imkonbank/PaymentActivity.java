@@ -4,13 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -19,8 +32,11 @@ import java.util.logging.Logger;
 public class PaymentActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     MyDataBaseHelper mydb ;
-    Button btn;
-    TextView textView;
+    Button paymentButton;
+    EditText client_card_number,price_entry;
+    TextView client_card_name,total_price_info;
+    String HOST_SERVER = "http://192.168.43.136:8000";
+
     ArrayList<String> user_id,user_name,user_tel_number,user_device_token;
     PaymentStoriesAdapter paymentStoriesAdapter;
     @Override
@@ -29,6 +45,102 @@ public class PaymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment);
 
         MyDataBaseHelper myDb = new MyDataBaseHelper(PaymentActivity.this);
+
+        paymentButton = findViewById(R.id.paymentButton);
+        client_card_name = findViewById(R.id.client_card_name);
+        client_card_number = findViewById(R.id.client_card_number);
+        price_entry = findViewById(R.id.price);
+        total_price_info = findViewById(R.id.total_price_info);
+
+        String device_token = getIntent().getExtras().getString("device_token");
+        String total_price = getIntent().getExtras().getString("total_price");
+
+        paymentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(PaymentActivity.this, "tolov bosildi " +price_entry.getText(), Toast.LENGTH_SHORT).show();
+//                client_card_name.setText(client_card_number.getText());
+            }
+        });
+
+        client_card_number.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                client_card_number.setBackgroundResource(R.drawable.custom_edittext);
+                client_card_name.setText("");
+                price_entry.getLayoutParams().height = 0;
+                String card_number = client_card_number.getText().toString();
+                String url ;
+                if(card_number.length()==16 && event.getKeyCode()!=67 && event.getKeyCode()!=59){
+                    client_card_number.setEnabled(false);
+                    client_card_name.setText("Qidirilmoqda ...");
+                    url = HOST_SERVER+"/check-card?card_number="+card_number+"&device_token="+device_token;
+
+                    JsonObjectRequest requestCardInfo = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String status = response.getString("status");
+                                String message = response.getString("message");
+                                if (status.equals("succes")) {
+                                    paymentButton.setEnabled(true);
+                                    String client_name = response.getJSONObject("client").getString("name");
+                                    String client_credit_card = response.getJSONObject("card").getString("card_number");
+                                    client_card_name.setText(client_name+client_credit_card);
+                                    client_card_number.setEnabled(true);
+                                    price_entry.getLayoutParams().height = client_card_number.getLayoutParams().height;
+                                    total_price_info.setText("Hisobingizda " +total_price+" so'm bor");
+                                }
+                                else{
+                                    client_card_number.setBackgroundResource(R.drawable.custom_edittext_error);
+                                    client_card_name.setText("");
+                                    client_card_number.setEnabled(true);
+                                }
+                                Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
+                                client_card_number.setEnabled(false);
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(PaymentActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
+                            Logger.getLogger(LoginActivity.class.getName()).log(Level.SEVERE,"xatolik",error);
+                            client_card_number.setEnabled(false);
+                        }
+                    });
+                    RequestQueue requestQueue = Volley.newRequestQueue(PaymentActivity.this);
+                    requestQueue.add(requestCardInfo);
+                }
+                else {
+                    paymentButton.setEnabled(false);
+                }
+                return false;
+            }
+        });
+
+        price_entry.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Integer calc_total_price = Integer.parseInt(total_price);
+                String temp = price_entry.getText().toString();
+                if(temp.length()>3){
+                    int calc_price = Integer.parseInt(temp);
+                    if(calc_total_price - calc_price >= 0 ){
+                        price_entry.setBackgroundResource(R.drawable.custom_edittext);
+                    }
+                    else{
+                        price_entry.setBackgroundResource(R.drawable.custom_edittext_error);
+                    }
+                }
+                return false;
+            }
+        });
+
 //        btn = findViewById(R.id.btn_test);
 //        textView = findViewById(R.id.text_test);
 //        btn.setOnClickListener(new View.OnClickListener() {
@@ -80,21 +192,5 @@ public class PaymentActivity extends AppCompatActivity {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(PaymentActivity.this));
     }
 
-    public void storageDataInArray(){
-
-        Cursor cursor = mydb.readAllData();
-//        if(cursor.getCount()==0){
-//            Toast.makeText(this,"malumot yoq",Toast.LENGTH_SHORT);
-//        }
-//        else{
-//            while(cursor.moveToNext()){
-//                Toast.makeText(this,cursor.getString(0),Toast.LENGTH_SHORT);
-//                user_id.add(cursor.getString(0));
-//                user_name.add(cursor.getString(1));
-//                user_tel_number.add(cursor.getString(2));
-//                user_device_token.add(cursor.getString(3));
-//            }
-//        }
-    }
 
 }
