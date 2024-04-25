@@ -59,6 +59,7 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), PaymentActivity.class);
                 intent.putExtra("device_token",device_token);
                 intent.putExtra("total_price",card_total_price.getText());
+                intent.putExtra("card_number",card_number.getText());
                 startActivity(intent);
             }
         });

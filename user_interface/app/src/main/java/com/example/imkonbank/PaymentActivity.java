@@ -1,6 +1,7 @@
 package com.example.imkonbank;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,15 +32,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PaymentActivity extends AppCompatActivity {
-    RecyclerView recyclerView;
-    MyDataBaseHelper mydb ;
     Button paymentButton;
     EditText client_card_number,price_entry;
     TextView client_card_name,total_price_info;
     String HOST_SERVER = "http://192.168.43.136:8000";
-
-    ArrayList<String> user_id,user_name,user_tel_number,user_device_token;
-    PaymentStoriesAdapter paymentStoriesAdapter;
+    String transaction_key = "";
+    TextView card_owner_number,card_client_number,card_owner_name,card_client_name,transaction_price,transaction_date_time,transaction_key_view;
+    Button paymentDone,paymentCancel;
+    CardView cardView,cardViewPayment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,15 +53,76 @@ public class PaymentActivity extends AppCompatActivity {
         price_entry = findViewById(R.id.price);
         total_price_info = findViewById(R.id.total_price_info);
 
+        card_owner_name = findViewById(R.id.card_owner_name);
+        card_owner_number = findViewById(R.id.card_owner_number);
+        card_client_name = findViewById(R.id.card_client_name);
+        card_client_number = findViewById(R.id.card_client_number);
+        transaction_price = findViewById(R.id.transaction_price);
+        transaction_date_time = findViewById(R.id.transaction_date_time);
+        transaction_key_view = findViewById(R.id.transaction_key);
+        paymentDone = findViewById(R.id.paymentDone);
+        paymentCancel = findViewById(R.id.paymentCancel);
+        cardView = findViewById(R.id.cardView);
+        cardViewPayment = findViewById(R.id.cardViewPayment);
+
         String device_token = getIntent().getExtras().getString("device_token");
         String total_price = getIntent().getExtras().getString("total_price");
+        String owner_card_number = getIntent().getExtras().getString("card_number");
+
+        cardView.getLayoutParams().height = 0;
 
         paymentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                paymentButton.setEnabled(false);
+                String urlPayment = HOST_SERVER+"/payment-info?card_owner_number="+owner_card_number+"&card_client_number="+client_card_number.getText()+"&transaction_price="+price_entry.getText();
+                        JsonObjectRequest paymenInfo = new JsonObjectRequest(Request.Method.GET, urlPayment, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String status = response.getString("status");
+                                    String message = response.getString("message");
+                                    if (status.equals("succes")) {
 
-                Toast.makeText(PaymentActivity.this, "tolov bosildi " +price_entry.getText(), Toast.LENGTH_SHORT).show();
-//                client_card_name.setText(client_card_number.getText());
+                                        ViewGroup.LayoutParams params1 = cardViewPayment.getLayoutParams();
+                                        ((ViewGroup.LayoutParams) params1).height = 0;
+                                        cardViewPayment.setLayoutParams(params1);
+
+                                        ViewGroup.LayoutParams params2 = cardView.getLayoutParams();
+                                        ((ViewGroup.LayoutParams) params2).height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                                        cardView.setLayoutParams(params2);
+
+                                        JSONObject card_owner = response.getJSONObject("card_owner");
+                                        JSONObject card_owner_info = response.getJSONObject("card_owner_info");
+                                        JSONObject card_client = response.getJSONObject("card_client");
+                                        JSONObject card_client_info = response.getJSONObject("card_client_info");
+                                        JSONObject transaction = response.getJSONObject("transaction");
+                                        card_owner_number.setText("Yuboruvchi: "+card_owner_info.getString("card_number"));
+                                        card_owner_name.setText("Yuboruvchining ismi: "+card_owner.getString("name"));
+                                        card_client_number.setText("Qabul qiluvchi: "+card_client_info.getString("card_number"));
+                                        card_client_name.setText("Qabul qiluvchining ismi: "+card_client.getString("name"));
+                                        transaction_key = transaction.getString("transaction_key");
+                                        transaction_key_view.setText("Transaction key: "+transaction_key);
+                                        transaction_price.setText("O'tkazilayotgan summa: "+transaction.getString("transaction_price"));
+                                        transaction_date_time.setText("Vaqti: "+transaction.getString("transaction_time"));
+                                    }
+                                    Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+                                }
+                                catch (JSONException e){
+                                    Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                    client_card_number.setEnabled(false);
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(PaymentActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    RequestQueue requestQueue = Volley.newRequestQueue(PaymentActivity.this);
+                    requestQueue.add(paymenInfo);
             }
         });
 
@@ -141,55 +203,43 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
-//        btn = findViewById(R.id.btn_test);
-//        textView = findViewById(R.id.text_test);
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Cursor res = myDb.readAllData();
-//                if (res.getCount()==0){
-//                    textView.setText("user malumot yoq");
-//                    return ;
-//                }
-//                StringBuffer buffer = new StringBuffer();
-//                while(res.moveToNext()){
-//                    buffer.append(" id "+res.getString(0));
-//                    buffer.append(" name "+res.getString(1));
-//                    buffer.append(" tel_number "+res.getString(2));
-//                    buffer.append(" password "+res.getString(3));
-//                    buffer.append(" tel_password "+res.getString(4));
-//                    buffer.append(" token "+res.getString(5));
-//                }
-//                textView.setText(buffer);
-//                Cursor card = myDb.readCards();
-//                if (card.getCount()==0){
-//                    textView.setText("card malumot yoq");
-//                    return ;
-//                }
-//                StringBuffer bufferCard = new StringBuffer();
-//                while(card.moveToNext()){
-//                    bufferCard.append(" id "+card.getString(0));
-//                    bufferCard.append(" user_id "+card.getString(1));
-//                    bufferCard.append(" card_number "+card.getString(2));
-//                    bufferCard.append(" live_time "+card.getString(3));
-//                    bufferCard.append(" total_price "+card.getString(4));
-//                }
-//                textView.setText(bufferCard);
-//
-//
-//            }
-//        });
-//        boolean t = myDb.addUser("1","932840470","tohir abdullayev","asasfds908098sd0f80sd9f");
-//        mydb = new MyDataBaseHelper(PaymentActivity.this);
-//        user_id = new ArrayList<>();
-//        user_name = new ArrayList<>();
-//        user_tel_number = new ArrayList<>();
-//        user_device_token = new ArrayList<>();
+        paymentDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String doneUrl = HOST_SERVER+"payment?transaction_key="+transaction_key;
+                JsonObjectRequest requestCardInfo = new JsonObjectRequest(Request.Method.GET, doneUrl, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String status = response.getString("status");
+                            String message = response.getString("message");
+                            if (status.equals("succes")) {
+                                // data bazaga pul yoz
+                            }
+                            Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                            client_card_number.setEnabled(false);
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(PaymentActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Toast.makeText(PaymentActivity.this, "done", Toast.LENGTH_SHORT).show();
+            }
+        });
+        paymentCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PaymentActivity.this, "cancel", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-//        storageDataInArray();
-//        paymentStoriesAdapter = new PaymentStoriesAdapter(PaymentActivity.this,user_id,user_name,user_tel_number,user_device_token);
-//        recyclerView.setAdapter(paymentStoriesAdapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(PaymentActivity.this));
     }
 
 
