@@ -96,6 +96,19 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+    public boolean updateCard(String card_number, String total_price){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("total_price",total_price);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM cards WHERE card_number=?", new String[]{card_number});
+        long result = db.update("cards",cv,"card_number=?",new String[]{card_number});
+        if(result==-1){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public Cursor readCards(){
         String query = "SELECT * FROM cards";
         SQLiteDatabase db = this.getWritableDatabase();

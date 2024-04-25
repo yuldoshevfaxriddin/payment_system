@@ -83,7 +83,7 @@ public class PaymentActivity extends AppCompatActivity {
                                     String status = response.getString("status");
                                     String message = response.getString("message");
                                     if (status.equals("succes")) {
-
+                                        price_entry.setEnabled(false);
                                         ViewGroup.LayoutParams params1 = cardViewPayment.getLayoutParams();
                                         ((ViewGroup.LayoutParams) params1).height = 0;
                                         cardViewPayment.setLayoutParams(params1);
@@ -206,7 +206,7 @@ public class PaymentActivity extends AppCompatActivity {
         paymentDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String doneUrl = HOST_SERVER+"payment?transaction_key="+transaction_key;
+                String doneUrl = HOST_SERVER+"/payment?transaction_key="+transaction_key;
                 JsonObjectRequest requestCardInfo = new JsonObjectRequest(Request.Method.GET, doneUrl, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -215,12 +215,17 @@ public class PaymentActivity extends AppCompatActivity {
                             String message = response.getString("message");
                             if (status.equals("succes")) {
                                 // data bazaga pul yoz
+                                JSONObject card_info = response.getJSONObject("card_info");
+                                String total_price = card_info.getString("total_price");
+                                String card_number = card_info.getString("card_number");
+                                myDb.updateCard(card_number,total_price);
+                                Intent loginIntent = new Intent(PaymentActivity.this, LoginActivity.class);
+                                startActivity(loginIntent);
                             }
                             Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
-                            client_card_number.setEnabled(false);
                             throw new RuntimeException(e);
                         }
                     }
@@ -230,7 +235,8 @@ public class PaymentActivity extends AppCompatActivity {
                         Toast.makeText(PaymentActivity.this, "server bilan bog'lanishda xatolik", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Toast.makeText(PaymentActivity.this, "done", Toast.LENGTH_SHORT).show();
+                RequestQueue requestQueue = Volley.newRequestQueue(PaymentActivity.this);
+                requestQueue.add(requestCardInfo);
             }
         });
         paymentCancel.setOnClickListener(new View.OnClickListener() {
