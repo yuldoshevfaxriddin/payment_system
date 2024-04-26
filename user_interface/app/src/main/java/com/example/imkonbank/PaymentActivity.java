@@ -35,7 +35,7 @@ public class PaymentActivity extends AppCompatActivity {
     Button paymentButton;
     EditText client_card_number,price_entry;
     TextView client_card_name,total_price_info;
-    String HOST_SERVER = "http://192.168.43.136:8000";
+    String HOST_SERVER = "http://192.168.43.105:8000";
     String transaction_key = "";
     TextView card_owner_number,card_client_number,card_owner_name,card_client_name,transaction_price,transaction_date_time,transaction_key_view;
     Button paymentDone,paymentCancel;

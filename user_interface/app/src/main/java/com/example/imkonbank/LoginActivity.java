@@ -37,7 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     TextView signuptext;
     TextView textView;
-    String HOST_SERVER = "http://192.168.43.136:8000";
+//    String HOST_SERVER = "http://192.168.43.136:8000";
+    String HOST_SERVER = "http://192.168.43.105:8000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +47,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         MyDataBaseHelper mydb = new MyDataBaseHelper(LoginActivity.this);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intentLogin = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intentRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+
 
         Cursor res = mydb.readAllData();
         if (res.getCount()!=0){
             String card_number="",card_live_time="",card_owner="",card_total_price="",device_token="";
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
             while(res.moveToNext()){
                 card_owner = res.getString(1);
@@ -82,18 +86,14 @@ public class LoginActivity extends AppCompatActivity {
         textView  = findViewById(R.id.test);
 
         String deviceInfo = Build.BRAND + " " + Build.MODEL;
-//        textView.setText(deviceInfo);
+        textView.setText(deviceInfo);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String telNumber = username.getText().toString();
                 String passwordEntry = password.getText().toString();
                 String url = HOST_SERVER+"/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
-//                if(telNumber.equals("admin")){
-////                    Toast.makeText(LoginActivity.this, "test rejimi if ishladi", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                    startActivity(intent);
-//                }
+                    Toast.makeText(LoginActivity.this, url, Toast.LENGTH_SHORT).show();
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -123,8 +123,13 @@ public class LoginActivity extends AppCompatActivity {
                             if(! t){
                                 Toast.makeText(LoginActivity.this, "card malumot qoshilmadi", Toast.LENGTH_SHORT).show();
                             }
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
+
+                            intentLogin.putExtra("card_number",card_number);
+                            intentLogin.putExtra("card_owner",name);
+                            intentLogin.putExtra("card_live_time",card_live_time);
+                            intentLogin.putExtra("card_total_price",card_total_price);
+                            intentLogin.putExtra("device_token",device_token);
+                            startActivity(intentLogin);
                         }
                         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
@@ -148,8 +153,7 @@ public class LoginActivity extends AppCompatActivity {
         signuptext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
+                startActivity(intentRegister);
             }
         });
     }
