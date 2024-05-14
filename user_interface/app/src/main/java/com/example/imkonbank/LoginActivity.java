@@ -1,5 +1,7 @@
 package com.example.imkonbank;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -38,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView signuptext;
     TextView textView;
 //    String HOST_SERVER = "http://192.168.43.136:8000";
-    String HOST_SERVER = "http://192.168.43.105:8000";
+    String HOST_SERVER = "http://192.168.209.105:8000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +97,16 @@ public class LoginActivity extends AppCompatActivity {
                 String telNumber = username.getText().toString();
                 String passwordEntry = password.getText().toString();
                 String url = HOST_SERVER+"/login?tel_number="+telNumber+"&password="+passwordEntry+"&device_info="+deviceInfo;
-                    Toast.makeText(LoginActivity.this, url, Toast.LENGTH_SHORT).show();
-
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                         String status = response.getString("status");
                         String message = response.getString("message");
+                        if(status.equals("info")){
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                            return ;
+                        }
                         if(status.equals("succes")){
                             JSONObject user = response.getJSONObject("user");
                             String user_id = user.getString("id");
@@ -133,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                             intentLogin.putExtra("device_token",device_token);
                             startActivity(intentLogin);
                         }
-                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Toast.makeText(LoginActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();

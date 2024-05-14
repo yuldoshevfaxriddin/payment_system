@@ -93,6 +93,16 @@ class AuthController extends Controller
         //     }
         // }
 
+        $devices = DeviceSession::where('user_id',$user->id)->get();
+        $users_limit = 3;
+        if(count($devices)>$users_limit){
+            $respons = [
+                'status'=>'info',
+                'message'=>"Sizda ulangan ".$users_limit-1 ." ta qurilma mavjud",
+            ];
+            return json_encode($respons);
+        }
+        
         $device_token = \Illuminate\Support\Str::uuid()->toString(date("Y/m/d")." ".date("h:i:sa"));
         $device = DeviceSession::create([
             'user_id'=>$user->id,
@@ -101,7 +111,6 @@ class AuthController extends Controller
             'created_time'=>date("Y/m/d")." ".date("h:i:sa"),
             'ip_addres'=>$req->server->get('REMOTE_ADDR'),
         ]);
-        $devices = DeviceSession::where('user_id',$user->id)->get();
         $virtual_cards = VirtualCard::where('user_id',$user->id)->get()[0] ;
 
 	$user['device_token']=$device_token;
@@ -113,5 +122,45 @@ class AuthController extends Controller
             'devices'=>$devices,
             ];
         return json_encode($respons);
+    }
+    public function log_out(Request $req){
+        $user_id = $req->input("user_id");
+        $device_token = $req->input("device_token");
+        $device = DeviceSession::where('user_id',$user_id)->where("device_token",$device_token)->first();
+        if(! $device){
+            $respons = [
+            'status'=>'error',
+            'message'=>'Qurilma topilmadi',
+            ];
+            return json_encode($respons);
+        }
+        $device->delete();
+        $respons = [
+            'status'=>'succes',
+            'message'=>'Tizimdan chiqarildi',
+            ];
+        return json_encode($respons);
+    }
+
+    public function devices(Request $req){
+        $user_id = $req->input("user_id");
+        $device_token = $req->input("device_token");
+        $device = DeviceSession::where('user_id',$user_id)->where("device_token",$device_token)->first();
+        if(! $device){
+            $respons = [
+            'status'=>'error',
+            'message'=>"Sizda ruxsat yo'q",
+            ];
+            return json_encode($respons);
+        }
+        $devices = DeviceSession::where('user_id',$user_id)->get();
+        $respons = [
+            'status'=>'succes',
+            'message'=>'Tizimdan chiqarildi',
+            'devices'=>$devices,
+            ];
+        return json_encode($respons);
+
+
     }
 }

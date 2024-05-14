@@ -1,25 +1,15 @@
 package com.example.imkonbank;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class PaymentStoriesAdapter extends BaseAdapter {
 
@@ -92,7 +82,7 @@ public class PaymentStoriesAdapter extends BaseAdapter {
                 payment_status.setTextColor(convertView.getResources().getColor(R.color.wait));
             }
 
-            if(currentUserId.equals(user_id)){
+            if(! currentUserId.equals(user_id)){
                 payment_price.setTextColor(convertView.getResources().getColor(R.color.status));
                 payment_price_text = "+"+payment_price_text;
             }

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_height="wrap_content"
     android:padding="12dp"
-    tools:context=".PaymentsItem">
+    tools:context=".DevicesViewAdapter">
     <TextView
         android:id="@+id/user_owner_name"
         android:layout_width="match_parent"

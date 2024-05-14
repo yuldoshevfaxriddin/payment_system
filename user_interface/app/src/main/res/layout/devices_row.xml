@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/device_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -25,29 +26,29 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/username"
+                android:id="@+id/device_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:textSize="20sp"
-                android:text="username"
+                android:text="Samsung A11"
                 app:layout_constraintStart_toEndOf="@+id/user_id"
                 app:layout_constraintTop_toTopOf="@+id/user_id" />
 
             <TextView
-                android:id="@+id/tel_number"
+                android:id="@+id/connected_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="tel number"
+                android:text="01.12.2024 11:28"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/username"
-                app:layout_constraintTop_toBottomOf="@+id/username" />
+                app:layout_constraintStart_toStartOf="@+id/device_name"
+                app:layout_constraintTop_toBottomOf="@+id/device_name" />
 
             <TextView
-                android:id="@+id/device_token"
+                android:id="@+id/ip_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="device token"
+                android:text="IP ADDRES"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,6 +70,15 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+    public boolean deleteUser(String user_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_NAME,"user_id=?",new String[]{user_id});
+        if(result==-1){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public Cursor readAllData(){
         String query = "SELECT * FROM "+ TABLE_NAME;
 //        SQLiteDatabase db = this.getReadableDatabase();

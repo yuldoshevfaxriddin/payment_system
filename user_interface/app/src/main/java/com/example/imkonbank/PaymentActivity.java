@@ -35,7 +35,7 @@ public class PaymentActivity extends AppCompatActivity {
     Button paymentButton;
     EditText client_card_number,price_entry;
     TextView client_card_name,total_price_info;
-    String HOST_SERVER = "http://192.168.43.105:8000";
+    String HOST_SERVER = "http://192.168.209.105:8000";
     String transaction_key = "";
     TextView card_owner_number,card_client_number,card_owner_name,card_client_name,transaction_price,transaction_date_time,transaction_key_view;
     Button paymentDone,paymentCancel;
@@ -106,7 +106,7 @@ public class PaymentActivity extends AppCompatActivity {
                                         transaction_price.setText("O'tkazilayotgan summa: "+transaction.getString("transaction_price"));
                                         transaction_date_time.setText("Vaqti: "+transaction.getString("transaction_time"));
                                     }
-                                    Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
                                 }
                                 catch (JSONException e){
                                     Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
@@ -148,8 +148,8 @@ public class PaymentActivity extends AppCompatActivity {
                                 if (status.equals("succes")) {
                                     paymentButton.setEnabled(true);
                                     String client_name = response.getJSONObject("client").getString("name");
-                                    String client_credit_card = response.getJSONObject("card").getString("card_number");
-                                    client_card_name.setText(client_name+client_credit_card);
+                                    String client_credit_card = card_number;
+                                    client_card_name.setText(client_name);
                                     client_card_number.setEnabled(true);
                                     price_entry.getLayoutParams().height = client_card_number.getLayoutParams().height;
                                     total_price_info.setText("Hisobingizda " +total_price+" so'm bor");
@@ -159,7 +159,7 @@ public class PaymentActivity extends AppCompatActivity {
                                     client_card_name.setText("");
                                     client_card_number.setEnabled(true);
                                 }
-                                Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
@@ -222,7 +222,7 @@ public class PaymentActivity extends AppCompatActivity {
                                 Intent loginIntent = new Intent(PaymentActivity.this, LoginActivity.class);
                                 startActivity(loginIntent);
                             }
-                            Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PaymentActivity.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Toast.makeText(PaymentActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();

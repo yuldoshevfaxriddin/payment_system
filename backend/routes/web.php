@@ -22,6 +22,8 @@ Route::get('/', function (Illuminate\Http\Request $r) {
 
 Route::get('/register',[\App\Http\Controllers\AuthController::class,'register']);
 Route::get('/login',[\App\Http\Controllers\AuthController::class,'login']);
+Route::get('/log-out',[\App\Http\Controllers\AuthController::class,'log_out']);
+Route::get('/devices',[\App\Http\Controllers\AuthController::class,'devices']);
 
 Route::get('/check-card',[\App\Http\Controllers\PaymentController::class,'check_card']);
 Route::get('/payment-info',[\App\Http\Controllers\PaymentController::class,'payment_info']);
