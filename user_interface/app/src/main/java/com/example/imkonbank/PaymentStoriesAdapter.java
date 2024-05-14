@@ -1,6 +1,7 @@
 package com.example.imkonbank;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,14 @@ public class PaymentStoriesAdapter extends BaseAdapter {
 
     LayoutInflater layoutInflater;
     Context context;
-    String data;
     JSONArray jsonArray;
+    String user_id;
     int listPaymentsSize;
-    public PaymentStoriesAdapter(Context context,JSONArray res, int listPaymentsSize){
+    public PaymentStoriesAdapter(Context context,JSONArray res, int listPaymentsSize,String user_id){
         this.context = context;
         this.jsonArray = res;
         this.listPaymentsSize = listPaymentsSize;
+        this.user_id = user_id;
         layoutInflater = LayoutInflater.from(context);
     }
     @Override
@@ -52,6 +54,8 @@ public class PaymentStoriesAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         convertView = layoutInflater.inflate(R.layout.activity_payments_item,null);
+
+
         TextView user_owner_name = (TextView) convertView.findViewById(R.id.user_owner_name);
         TextView user_client_name = (TextView) convertView.findViewById(R.id.user_client_name);
         TextView user_owner_card = (TextView) convertView.findViewById(R.id.user_owner_card);
@@ -60,8 +64,6 @@ public class PaymentStoriesAdapter extends BaseAdapter {
         TextView payment_date = (TextView) convertView.findViewById(R.id.payment_date);
         TextView payment_price = (TextView) convertView.findViewById(R.id.payment_price);
 
-//        JSONObject = jsonArray.getJSONObject(0);
-
         String user_owner_name_text = "";
         String user_client_name_text= "";
         String user_owner_card_text= "";
@@ -69,14 +71,47 @@ public class PaymentStoriesAdapter extends BaseAdapter {
         String payment_status_text= "";
         String payment_date_text= "";
         String payment_price_text= "";
+        String currentUserId = "";
+        try {
+            JSONObject data = jsonArray.getJSONObject(position);
+            JSONObject payment_info = data.getJSONObject("payment_info");
 
-        user_owner_name.setText("Yuboruvchi : "+ "abdullayev jamshid "+user_owner_name_text);
-        user_client_name.setText("Qabul qiluvchi : "+ "toshpolatov shaxzodbek"+user_client_name_text);
-        user_owner_card.setText("Yuboruvchi card : "+ "9860190104600001"+user_owner_card_text);
-        user_client_card.setText("Qabul qiluvchi card : "+ "9860190104601181"+user_client_card_text);
-        payment_status.setText("Status : "+ "amalga oshgan"+payment_status_text);
-        payment_date.setText("Sana : "+ "12.12.2024"+payment_date_text);
-        payment_price.setText("Summa : "+ "45000"+payment_price_text);
+            user_owner_name_text = data.getString("user_owner_info");
+            user_client_name_text = data.getString("user_client_info");
+            user_owner_card_text = payment_info.getString("card_id_1");
+            user_client_card_text = payment_info.getString("card_id_2");
+            payment_status_text = payment_info.getString("status");
+            payment_date_text = payment_info.getString("created_at");
+            payment_price_text = payment_info.getString("price");
+            currentUserId = payment_info.getString("user_id_1");
+            if(payment_status_text.equals("1")){
+                payment_status_text = "bajarildi";
+                payment_status.setTextColor(convertView.getResources().getColor(R.color.done));
+            }else {
+                payment_status_text = "jarayonda";
+                payment_status.setTextColor(convertView.getResources().getColor(R.color.wait));
+            }
+
+            if(currentUserId.equals(user_id)){
+                payment_price.setTextColor(convertView.getResources().getColor(R.color.status));
+                payment_price_text = "+"+payment_price_text;
+            }
+            else {
+                payment_price.setTextColor(convertView.getResources().getColor(R.color.non_status));
+                payment_price_text = "-"+payment_price_text;
+            }
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        user_owner_name.setText("Yuboruvchi : "+user_owner_name_text);
+        user_client_name.setText("Qabul qiluvchi : "+user_client_name_text);
+        user_owner_card.setText("Yuboruvchi card : "+user_owner_card_text);
+        user_client_card.setText("Qabul qiluvchi card : "+user_client_card_text);
+        payment_status.setText("Status : "+payment_status_text);
+        payment_date.setText("Sana : "+ payment_date_text);
+        payment_price.setText("Summa : "+payment_price_text);
 
         return convertView;
     }

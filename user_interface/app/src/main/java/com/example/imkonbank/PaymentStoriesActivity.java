@@ -8,9 +8,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,9 +21,9 @@ import org.json.JSONObject;
 public class PaymentStoriesActivity extends AppCompatActivity {
 
     ListView listView;
-    int  listPaymentsSize = 0;
+    int  listPaymentsSize ;
     JSONArray allRespons = null;
-    String HOST_SERVER = "http://192.168.43.105:8000";
+    String HOST_SERVER = "http://192.168.209.105:8000";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +37,9 @@ public class PaymentStoriesActivity extends AppCompatActivity {
                 user_id = userTable.getString(0);
             }
         }
-        String requestUrl = "payments-stories?user_id="+user_id;
+        String requestUrl = HOST_SERVER+"/payments-stories?user_id="+user_id;
 
+        String finalUser_id = user_id;
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -47,7 +50,10 @@ public class PaymentStoriesActivity extends AppCompatActivity {
                         JSONArray payments = response.getJSONArray("payments");
                         allRespons = payments;
                         listPaymentsSize = payments.length();
+                        PaymentStoriesAdapter paymentStoriesAdapter = new PaymentStoriesAdapter(getApplicationContext(),allRespons,listPaymentsSize,finalUser_id);
+                        listView.setAdapter(paymentStoriesAdapter);
                     }
+                    Toast.makeText(PaymentStoriesActivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     Toast.makeText(PaymentStoriesActivity.this, "ma'lumotlarni o'qishda xatolik ", Toast.LENGTH_SHORT).show();
                     throw new RuntimeException(e);
@@ -59,8 +65,8 @@ public class PaymentStoriesActivity extends AppCompatActivity {
                 Toast.makeText(PaymentStoriesActivity.this, "Tarmoqda xatolik !", Toast.LENGTH_SHORT).show();
             }
         });
+        RequestQueue requestQueue = Volley.newRequestQueue(PaymentStoriesActivity.this);
+        requestQueue.add(jsonRequest);
 
-        PaymentStoriesAdapter paymentStoriesAdapter = new PaymentStoriesAdapter(getApplicationContext(),allRespons,listPaymentsSize);
-        listView.setAdapter(paymentStoriesAdapter);
     }
 }

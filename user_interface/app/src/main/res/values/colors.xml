@@ -13,4 +13,9 @@
     <color name="card_background">#8692f7</color>
     <color name="error">#EC0B13</color>
 
+    <color name="status">#41BDA4</color>
+    <color name="non_status">#BD6161</color>
+    <color name="wait">#1042D8</color>
+    <color name="done">#54BD41</color>
+
 </resources>
