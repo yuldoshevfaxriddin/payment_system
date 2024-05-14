@@ -1,67 +1,83 @@
 package com.example.imkonbank;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class PaymentStoriesAdapter extends RecyclerView.Adapter<PaymentStoriesAdapter.MyViewHolder> {
+public class PaymentStoriesAdapter extends BaseAdapter {
+
+    LayoutInflater layoutInflater;
     Context context;
-    ArrayList user_id,user_tel_number,user_name,user_device_token;
-    PaymentStoriesAdapter(Context context,
-                          ArrayList user_id,
-                          ArrayList user_tel_number,
-                          ArrayList user_name,
-                          ArrayList user_device_token){
+    String data;
+    JSONArray jsonArray;
+    int listPaymentsSize;
+    public PaymentStoriesAdapter(Context context,JSONArray res, int listPaymentsSize){
         this.context = context;
-        this.user_id = user_id;
-        this.user_name = user_name;
-        this.user_tel_number = user_tel_number;
-        this.user_device_token = user_device_token;
+        this.jsonArray = res;
+        this.listPaymentsSize = listPaymentsSize;
+        layoutInflater = LayoutInflater.from(context);
     }
-    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.my_row, parent, false);
-        return new MyViewHolder(view);
+    public int getCount() {
+        return listPaymentsSize;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.user_id.setText(String.valueOf(user_id.get(position)));
-        holder.username.setText(String.valueOf(user_name.get(position)));
-        holder.tel_number.setText(String.valueOf(user_tel_number.get(position)));
-        holder.device_token.setText(String.valueOf(user_device_token.get(position)));
+    public Object getItem(int position) {
+        return null;
     }
 
     @Override
-    public int getItemCount() {
-        return  user_id.size();
+    public long getItemId(int position) {
+        return 0;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView user_id, username, tel_number, device_token;
-        LinearLayout mainLayout;
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            user_id = itemView.findViewById(R.id.user_id);
-            username = itemView.findViewById(R.id.username);
-            tel_number = itemView.findViewById(R.id.tel_number);
-            device_token = itemView.findViewById(R.id.device_token);
-//            mainLayout = itemView.findViewById(R.id.mainLayout);
-            //Animate Recyclerview
-//            Animation translate_anim = AnimationUtils.loadAnimation(context, R.anim.translate_anim);
-//            mainLayout.setAnimation(translate_anim);
-        }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        convertView = layoutInflater.inflate(R.layout.activity_payments_item,null);
+        TextView user_owner_name = (TextView) convertView.findViewById(R.id.user_owner_name);
+        TextView user_client_name = (TextView) convertView.findViewById(R.id.user_client_name);
+        TextView user_owner_card = (TextView) convertView.findViewById(R.id.user_owner_card);
+        TextView user_client_card = (TextView) convertView.findViewById(R.id.user_client_card);
+        TextView payment_status = (TextView) convertView.findViewById(R.id.payment_status);
+        TextView payment_date = (TextView) convertView.findViewById(R.id.payment_date);
+        TextView payment_price = (TextView) convertView.findViewById(R.id.payment_price);
+
+//        JSONObject = jsonArray.getJSONObject(0);
+
+        String user_owner_name_text = "";
+        String user_client_name_text= "";
+        String user_owner_card_text= "";
+        String user_client_card_text= "";
+        String payment_status_text= "";
+        String payment_date_text= "";
+        String payment_price_text= "";
+
+        user_owner_name.setText("Yuboruvchi : "+ "abdullayev jamshid "+user_owner_name_text);
+        user_client_name.setText("Qabul qiluvchi : "+ "toshpolatov shaxzodbek"+user_client_name_text);
+        user_owner_card.setText("Yuboruvchi card : "+ "9860190104600001"+user_owner_card_text);
+        user_client_card.setText("Qabul qiluvchi card : "+ "9860190104601181"+user_client_card_text);
+        payment_status.setText("Status : "+ "amalga oshgan"+payment_status_text);
+        payment_date.setText("Sana : "+ "12.12.2024"+payment_date_text);
+        payment_price.setText("Summa : "+ "45000"+payment_price_text);
+
+        return convertView;
     }
 }

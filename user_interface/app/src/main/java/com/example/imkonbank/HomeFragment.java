@@ -29,7 +29,7 @@ public class HomeFragment extends Fragment {
 //    Cursor card = myDb.readCards();
     TextView payment_btn;
     TextView payment_stories,card_owner,card_number,card_live_time,card_total_price;
-    String device_token;
+    String device_token,user_id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PaymentStoriesActivity.class);
+                intent.putExtra("user_id",user_id);
                 startActivity(intent);
             }
         });

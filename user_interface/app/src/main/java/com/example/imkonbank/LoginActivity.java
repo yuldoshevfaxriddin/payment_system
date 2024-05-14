@@ -54,9 +54,10 @@ public class LoginActivity extends AppCompatActivity {
 
         Cursor res = mydb.readAllData();
         if (res.getCount()!=0){
-            String card_number="",card_live_time="",card_owner="",card_total_price="",device_token="";
+            String card_number="",card_live_time="",card_owner="",card_total_price="",device_token="",user_id="";
 
             while(res.moveToNext()){
+                user_id = res.getString(0);
                 card_owner = res.getString(1);
                 device_token = res.getString(5);
             }
@@ -77,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra("card_live_time",card_live_time);
             intent.putExtra("card_total_price",card_total_price);
             intent.putExtra("device_token",device_token);
+            intent.putExtra("user_id",user_id);
             startActivity(intent);
         }
         username = findViewById(R.id.username);
