@@ -36,12 +36,14 @@ class PaymentController extends Controller
         }
         $device_owner = User::find($device->user_id);
         $client = User::find($card_info->user_id);
+        $card = VirtualCard::where('user_id',$client->id)->first();
         $respons = [
             'status'=>'succes',
             'message'=>'malumotlar topildi',
             'device'=>$device,
             'device_owner'=>$device_owner,
             'client'=>$client,
+            'card'=>$card,
         ];
         return json_encode($respons);
     }
@@ -80,7 +82,7 @@ class PaymentController extends Controller
             'card_number_owner_id'=>$card_owner_info->id,
             'card_number_client_id'=>$card_client_info->id,
             'transaction_price'=>$transaction_price,
-            'transaction_time'=>date("Y/m/d")." ".date("h:i:sa"),
+            'transaction_time'=>date("Y/m/d")." ".date("h:m:s"),
             'status'=>0,
         ]);
 

@@ -54,6 +54,8 @@ class AuthController extends Controller
             'ip_addres'=>$req->server->get('REMOTE_ADDR'),
         ]);
 
+        $user['device_token'] = $device_token;
+
         $respons = [
             'status'=>'succes',
             'message'=>'foydalanuvchi yaratildi',
@@ -102,7 +104,10 @@ class AuthController extends Controller
             'ip_addres'=>$req->server->get('REMOTE_ADDR'),
         ]);
         $devices = DeviceSession::where('user_id',$user->id)->get();
-        $virtual_cards = VirtualCard::where('user_id',$user->id)->get() ;
+        $virtual_cards = VirtualCard::where('user_id',$user->id)->get()[0] ; // birsi ketib tursin hozircha
+
+        $user['device_token'] = $device_token;
+
         $respons = [
             'status'=>'succes',
             'message'=>'tizimga kirildi',
