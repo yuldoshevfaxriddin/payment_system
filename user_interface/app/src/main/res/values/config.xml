@@ -1,3 +1,8 @@
 <resources>
     <string name="HOST_SERVER">http://192.168.209.105:8000</string>
+    <string name="app_version">version 1.0.0</string>
+    <string name="programmer1">TOSHPOLATOV SHAHZODBEK </string>
+    <string name="programmer2">AXMEDOV MAXMUDJON</string>
+    <string name="anjir_email">angirbank@angirbank.uz</string>
+    <string name="app_name">Anjir Bank</string>
 </resources>

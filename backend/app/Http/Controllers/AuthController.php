@@ -94,7 +94,7 @@ class AuthController extends Controller
         // }
 
         $devices = DeviceSession::where('user_id',$user->id)->get();
-        $users_limit = 2;
+        $users_limit = 2 ;
         if(count($devices) > $users_limit -1 ){  
             $respons = [
                 'status'=>'info',
