@@ -49,6 +49,7 @@
                 android:drawablePadding="8dp"
                 android:hint="Telefon raqam"
                 android:padding="8dp"
+                android:inputType="phone"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"
                 android:layout_marginTop="40dp"/>

@@ -18,16 +18,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class PaymentStoriesActivity extends AppCompatActivity {
 
     ListView listView;
     int  listPaymentsSize ;
     JSONArray allRespons = null;
-    String HOST_SERVER = "http://192.168.209.105:8000";
+    String HOST_SERVER ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_stories);
+        HOST_SERVER = getString(R.string.HOST_SERVER);
         listView = findViewById(R.id.payments_render);
         String user_id = "";
         MyDataBaseHelper mydb = new MyDataBaseHelper(PaymentStoriesActivity.this);

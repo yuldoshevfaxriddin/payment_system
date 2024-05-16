@@ -31,12 +31,13 @@ import java.util.logging.Logger;
 public class RegisterActivity extends AppCompatActivity {
     Button regbutton;
     EditText tel_number,user_name,password1,password2;
-    String HOST_SERVER = "http://192.168.209.105:8000";
+    String HOST_SERVER ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
+        HOST_SERVER = getString(R.string.HOST_SERVER);
         regbutton = findViewById(R.id.regButton);
         tel_number =findViewById(R.id.tel_number_entry);
         password1 =findViewById(R.id.password1);
@@ -94,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 startActivity(intent);
 
                             }
-
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Toast.makeText(RegisterActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
@@ -113,10 +114,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
     }
 }

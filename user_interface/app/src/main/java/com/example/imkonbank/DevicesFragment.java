@@ -24,17 +24,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ShareFragment extends Fragment {
+public class DevicesFragment extends Fragment {
 
     JSONArray jsonArray;
     int jsonArraySize;
     ListView listView;
     String HOST_SERVER = "http://192.168.209.105:8000";
+    String device_token= "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_share, container, false);
+        return inflater.inflate(R.layout.fragment_devices, container, false);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ShareFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         listView = (ListView) view.findViewById(R.id.devices_render);
         String user_id = "";
-        String device_token= "";
+
         MyDataBaseHelper mydb = new MyDataBaseHelper(getContext());
         Cursor userTable = mydb.readAllData();
         if (userTable.getCount()!=0){
@@ -63,7 +64,7 @@ public class ShareFragment extends Fragment {
                         JSONArray payments = response.getJSONArray("devices");
                         jsonArray = payments;
                         jsonArraySize = payments.length();
-                        DevicesViewAdapter devicesViewAdapter = new DevicesViewAdapter(getActivity(),jsonArray,jsonArraySize);
+                        DevicesViewAdapter devicesViewAdapter = new DevicesViewAdapter(getActivity(),jsonArray,jsonArraySize,device_token);
                         listView.setAdapter(devicesViewAdapter);
                     }
                 } catch (JSONException e) {

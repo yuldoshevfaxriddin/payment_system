@@ -43,6 +43,7 @@
                 android:drawableLeft="@drawable/baseline_phone_iphone_24"
                 android:drawablePadding="8dp"
                 android:hint="Telefon raqam"
+                android:inputType="phone"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"
@@ -58,7 +59,7 @@
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/cardview_dark_background"
-                android:layout_marginTop="40dp"/>
+                android:layout_marginTop="20dp"/>
 
             <EditText
                 android:layout_width="match_parent"
