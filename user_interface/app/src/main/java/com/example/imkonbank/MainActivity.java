@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyDataBaseHelper mydb = new MyDataBaseHelper(MainActivity.this);
     private String user_id;
     private String device_token;
-    private String HOST_SERVER = "http://192.168.209.105:8000";
+    private String HOST_SERVER ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        HOST_SERVER = getString(R.string.HOST_SERVER);
         Toolbar toolbar = findViewById(R.id.toolbar); //Ignore red line errors
 //        setSupportActionBar(toolbar);
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if(id == R.id.nav_about){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
         }else if(id == R.id.nav_share){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DevicesFragment()).commit();
         }else if(id == R.id.nav_logout){
             Cursor res = mydb.readAllData();
             while(res.moveToNext()){

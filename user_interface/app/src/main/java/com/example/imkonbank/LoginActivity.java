@@ -39,15 +39,14 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     TextView signuptext;
     TextView textView;
-//    String HOST_SERVER = "http://192.168.43.136:8000";
-    String HOST_SERVER = "http://192.168.209.105:8000";
+    String HOST_SERVER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-
+        HOST_SERVER = getString(R.string.HOST_SERVER);
         MyDataBaseHelper mydb = new MyDataBaseHelper(LoginActivity.this);
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         Intent intentLogin = new Intent(LoginActivity.this, MainActivity.class);
@@ -137,6 +136,8 @@ public class LoginActivity extends AppCompatActivity {
                             intentLogin.putExtra("device_token",device_token);
                             startActivity(intentLogin);
                         }
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+
                         } catch (JSONException e) {
                             Toast.makeText(LoginActivity.this, "malumotlarni o'qishda xatolik", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();

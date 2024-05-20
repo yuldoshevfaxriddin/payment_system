@@ -96,11 +96,11 @@ class AuthController extends Controller
         // }
 
         $devices = DeviceSession::where('user_id',$user->id)->get();
-        $users_limit = 3;
-        if(count($devices)>$users_limit){
+        $users_limit = 2 ;
+        if(count($devices) > $users_limit -1 ){  
             $respons = [
                 'status'=>'info',
-                'message'=>"Sizda ulangan ".$users_limit-1 ." ta qurilma mavjud",
+                'message'=>"Sizda ulangan ".count($devices) ." ta qurilma mavjud",
             ];
             return json_encode($respons);
         }

@@ -166,9 +166,10 @@ class PaymentController extends Controller
             ];
             return json_encode($respons);
         }
-        $payments_stories = PaymentStories::where('user_id_1',$user->id)->orWhere('user_id_2',$user->id)->get();
+        $payments_stories = PaymentStories::where('user_id_1',$user->id)->orWhere('user_id_2',$user->id)->orderBy('id', 'DESC')->get();
 
         $stories_respons = [];
+
         foreach($payments_stories as $payment ){
             $stories_respons[] = [
                 'user_owner_info'=>User::find($payment->user_id_1)->name,

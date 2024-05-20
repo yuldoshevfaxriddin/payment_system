@@ -17,11 +17,13 @@ public class DevicesViewAdapter extends BaseAdapter {
     Context context;
     LayoutInflater layoutInflater;
     JSONArray jsonArray;
+    String device_token;
     int jsonArraySize;
-    public DevicesViewAdapter(Context context, JSONArray jsonArray, int jsonArraySize ){
+    public DevicesViewAdapter(Context context, JSONArray jsonArray, int jsonArraySize, String device_token){
         this.context = context;
         this.jsonArray = jsonArray;
         this.jsonArraySize = jsonArraySize;
+        this.device_token = device_token;
         layoutInflater = LayoutInflater.from(context);
     }
     @Override
@@ -47,15 +49,20 @@ public class DevicesViewAdapter extends BaseAdapter {
         TextView device_name = (TextView) convertView.findViewById(R.id.device_name);
         TextView ip_address = (TextView) convertView.findViewById(R.id.ip_address);
         TextView connected_time = (TextView) convertView.findViewById(R.id.connected_time);
-        LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.device_layout);
+        TextView device_info = (TextView) convertView.findViewById(R.id.device_info);
 
-        String d="",i="",t="";
+
+        String d="",i="",t="",d_n="";
         int id_number = position+1;
         try {
             JSONObject data = jsonArray.getJSONObject(position);
             d = data.getString("device_info");
             i = data.getString("ip_addres");
             t = data.getString("created_at");
+            d_n = data.getString("device_token");
+            if (d_n.equals(this.device_token)){
+                device_info.setText("Joriy qurilma");
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
