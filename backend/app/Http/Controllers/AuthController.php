@@ -162,5 +162,7 @@ class AuthController extends Controller
             'devices'=>$devices,
             ];
         return json_encode($respons);
+
+
     }
 }
