@@ -29,7 +29,7 @@ public class DevicesFragment extends Fragment {
     JSONArray jsonArray;
     int jsonArraySize;
     ListView listView;
-    String HOST_SERVER = "http://192.168.209.105:8000";
+    String HOST_SERVER ;
     String device_token= "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,6 +41,7 @@ public class DevicesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        HOST_SERVER = getString(R.string.HOST_SERVER);
         listView = (ListView) view.findViewById(R.id.devices_render);
         String user_id = "";
 
